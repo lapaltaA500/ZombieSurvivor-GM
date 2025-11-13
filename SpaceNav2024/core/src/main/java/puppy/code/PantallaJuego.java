@@ -49,6 +49,10 @@ public class PantallaJuego implements Screen {
     private int tiempoTransicion = 0;
     private static final int TIEMPO_TRANSICION_MAX = 120;
 
+    // NUEVO: Abstract Factory
+    private EscenarioFactory escenarioFactory;
+    private GestorEscenarios gestorEscenarios;
+
     public PantallaJuego(SpaceNavigation game,
             int ronda,
             int vidas,
@@ -82,12 +86,8 @@ public class PantallaJuego implements Screen {
 		// Inicializar managers
 		inicializarManagers();
 		
-		// Configurar música de fondo
-		musicaFondo = gestorAssets.getMusica("survival-theme");
-		musicaFondo.setLooping(true);
-		musicaFondo.setVolume(0.7f);
-		musicaFondo.play();
-	}
+		// NUEVO: La música ahora se configura en aplicarEscenarioActual()
+    }
 
     /**
      * Inicializa los sistemas básicos del juego
@@ -98,9 +98,9 @@ public class PantallaJuego implements Screen {
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         camera.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, 0);
         
-        // Fondo del juego
+        // Fondo temporal - será reemplazado por la factory
         gestorAssets = GestorAssets.get();
-        spriteFondo = new Sprite(gestorAssets.getTextura("fondo-juego"));
+        spriteFondo = new Sprite(gestorAssets.getTextura("fondo-bosque"));
         spriteFondo.setSize(WORLD_WIDTH, WORLD_HEIGHT);
         spriteFondo.setPosition(0, 0);
     }
@@ -132,7 +132,37 @@ public class PantallaJuego implements Screen {
         // Gestor de interfaz de usuario
         gestorUI = new GestorUI(game, nave, gestorSpawn);
         
+        // NUEVO: INICIALIZAR ABSTRACT FACTORY
+        gestorEscenarios = new GestorEscenarios();
+        escenarioFactory = gestorEscenarios.getFactoryParaRonda(ronda);
+        
+        // Aplicar el escenario actual
+        aplicarEscenarioActual();
+        
         estadoActual = EstadosJuego.JUGANDO_ENEMIGOS;
+    }
+
+    /**
+     * NUEVO: Aplica el escenario actual cambiando fondo, música, etc.
+     */
+    private void aplicarEscenarioActual() {
+        // Cambiar fondo según la factory
+        Texture fondo = escenarioFactory.crearFondo();
+        spriteFondo = new Sprite(fondo);
+        spriteFondo.setSize(WORLD_WIDTH, WORLD_HEIGHT);
+        spriteFondo.setPosition(0, 0);
+        
+        // Cambiar música
+        if (musicaFondo != null) {
+            musicaFondo.stop();
+        }
+        musicaFondo = escenarioFactory.crearMusica();
+        musicaFondo.setLooping(true);
+        musicaFondo.setVolume(0.7f);
+        musicaFondo.play();
+        
+        // Actualizar UI con nombre del escenario
+        gestorUI.setNombreEscenario(escenarioFactory.getNombreEscenario());
     }
 
     // ==================================================
@@ -325,6 +355,11 @@ public class PantallaJuego implements Screen {
     public int getVelXAsteroides() { return velXAsteroides; }
     public int getVelYAsteroides() { return velYAsteroides; }
     public Nave4 getJugador() { return nave; }
+
+    // NUEVO: Getter para la factory (necesario para GestorSpawn)
+    public EscenarioFactory getEscenarioFactory() {
+        return escenarioFactory;
+    }
 
     // ==================================================
     // Métodos del ciclo de vida Screen

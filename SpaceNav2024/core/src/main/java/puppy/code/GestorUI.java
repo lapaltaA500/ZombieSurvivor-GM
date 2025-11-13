@@ -12,6 +12,7 @@ public class GestorUI {
     private GestorSpawn gestorSpawn;
     private int ronda;
     private int estadoActual; 
+    private String nombreEscenario = "";
     
     public GestorUI(SpaceNavigation juego, Nave4 jugador, GestorSpawn gestorSpawn) {
         this.juego = juego;
@@ -56,6 +57,12 @@ public class GestorUI {
             juego.getFont().draw(batch, "¡Oleada " + ronda + " completada!",
                     PantallaJuego.WORLD_WIDTH / 2f - 120, 90);
         }
+
+        // Nombre del escenario (NUEVO)
+        if (!nombreEscenario.isEmpty()) {
+            juego.getFont().draw(batch, nombreEscenario, 
+                    PantallaJuego.WORLD_WIDTH / 2f - 150, PantallaJuego.WORLD_HEIGHT - 20);
+        }
     }
     
     // Setters para actualizar estado
@@ -65,5 +72,10 @@ public class GestorUI {
     
     public void setEstadoActual(int estadoActual) {
         this.estadoActual = estadoActual;
+    }
+
+    // NUEVO: Setter para el nombre del escenario
+    public void setNombreEscenario(String nombreEscenario) {
+        this.nombreEscenario = nombreEscenario;
     }
 }

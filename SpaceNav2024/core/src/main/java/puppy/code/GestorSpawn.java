@@ -56,9 +56,9 @@ public class GestorSpawn {
     private void spawnearEnemigo() {
         Random random = new Random();
         
-        // Determinar posición de spawn en los bordes
+        // Determinar posición de spawn (código existente)
         float spawnX, spawnY;
-        int lado = random.nextInt(4); // 0: arriba, 1: derecha, 2: abajo, 3: izquierda
+        int lado = random.nextInt(4);
         
         switch (lado) {
             case 0: // arriba
@@ -79,22 +79,60 @@ public class GestorSpawn {
                 spawnY = random.nextInt((int) PantallaJuego.WORLD_HEIGHT);
         }
         
-        // Variación en velocidad para mayor diversidad
-        int variacionVel = random.nextInt(3) - 1; // -1, 0, o +1
+        // USAR ABSTRACT FACTORY PARA CREAR ENEMIGOS
+        Enemigo nuevoEnemigo;
         
-        Ball2 nuevoEnemigo = new Ball2(
-            (int) spawnX,
-            (int) spawnY,
-            60 + random.nextInt(10),
-            pantalla.getVelXAsteroides() + variacionVel,
-            pantalla.getVelYAsteroides() + variacionVel,
-            GestorAssets.get().getTextura("zombie"),
-            pantalla.getJugador()
-        );
+        if (random.nextFloat() < 0.8f) { // 80% enemigos básicos
+            nuevoEnemigo = pantalla.getEscenarioFactory().crearEnemigoBasico(spawnX, spawnY, pantalla.getJugador());
+        } else { // 20% enemigos especiales
+            nuevoEnemigo = pantalla.getEscenarioFactory().crearEnemigoEspecial(spawnX, spawnY, pantalla.getJugador());
+        }
         
         // Aplicar escalado por ronda
         nuevoEnemigo.escalarPorRonda(pantalla.getRonda());
-        gestorEntidades.agregarEnemigo(nuevoEnemigo);
+        gestorEntidades.agregarEnemigo((Ball2) nuevoEnemigo);
+    }
+
+    /**
+     * Asigna estrategias de movimiento y ataque basado en la ronda
+     */
+    private void asignarEstrategiasAleatorias(Ball2 enemigo, int ronda) {
+        Random random = new Random();
+        
+        // Estrategias de movimiento basadas en la ronda
+        if (ronda <= 2) {
+            // Rondas 1-2: Solo movimiento básico
+            enemigo.setEstrategiaMovimiento(new MovimientoPerseguir());
+        } else if (ronda <= 4) {
+            // Rondas 3-4: Añadir zigzag
+            int tipo = random.nextInt(2);
+            if (tipo == 0) {
+                enemigo.setEstrategiaMovimiento(new MovimientoPerseguir());
+            } else {
+                enemigo.setEstrategiaMovimiento(new MovimientoZigZag());
+            }
+        } else if (ronda <= 6) {
+            // Rondas 5-6: Añadir movimiento rápido
+            int tipo = random.nextInt(3);
+            switch (tipo) {
+                case 0: enemigo.setEstrategiaMovimiento(new MovimientoPerseguir()); break;
+                case 1: enemigo.setEstrategiaMovimiento(new MovimientoZigZag()); break;
+                case 2: enemigo.setEstrategiaMovimiento(new MovimientoRapido()); break;
+            }
+        } else {
+            // Rondas 7+: Todos los tipos incluyendo circular
+            int tipo = random.nextInt(4);
+            switch (tipo) {
+                case 0: enemigo.setEstrategiaMovimiento(new MovimientoPerseguir()); break;
+                case 1: enemigo.setEstrategiaMovimiento(new MovimientoZigZag()); break;
+                case 2: enemigo.setEstrategiaMovimiento(new MovimientoRapido()); break;
+                case 3: enemigo.setEstrategiaMovimiento(new MovimientoCircular()); break;
+            }
+        }
+        
+        // Estrategias de ataque (más adelante se pueden añadir)
+        // Por ahora todos usan ataque simple
+        enemigo.setEstrategiaAtaque(new AtaqueSimple());
     }
     
     /**

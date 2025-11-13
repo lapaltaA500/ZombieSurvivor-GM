@@ -11,32 +11,29 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
- * Pantalla de menú principal con fondo implementado.
- * Muestra las instrucciones del juego y espera la interacción del usuario para comenzar.
- * MOD: Sistema de viewport para escalado consistente independiente de la resolución.
+ * Pantalla de menú principal actualizada para usar GestorAssets
  */
 public class PantallaMenu implements Screen {
 
 	private SpaceNavigation game;
 	private OrthographicCamera camera;
 	private Viewport viewport;
-	private Texture texturaFondo;
 	private Sprite spriteFondo;
 
-	// MOD: Constantes del mundo lógico
+	// Constantes del mundo lógico
 	private static final float WORLD_WIDTH = 1200f;
 	private static final float WORLD_HEIGHT = 800f;
 
 	public PantallaMenu(SpaceNavigation game) {
 		this.game = game;
         
-		// MOD: Sistema de viewport para escalado consistente
+		// Sistema de viewport
 		camera = new OrthographicCamera();
 		viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
 		camera.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, 0);
 		
-		// Cargar textura de fondo para el menú
-		texturaFondo = new Texture(Gdx.files.internal("fondo-menu.jpg"));
+		// Cargar fondo usando GestorAssets
+		Texture texturaFondo = GestorAssets.get().getTextura("fondo-menu");
 		spriteFondo = new Sprite(texturaFondo);
 		spriteFondo.setSize(WORLD_WIDTH, WORLD_HEIGHT);
 		spriteFondo.setPosition(0, 0);
@@ -46,16 +43,15 @@ public class PantallaMenu implements Screen {
 	public void render(float delta) {
 		ScreenUtils.clear(0, 0, 0.2f, 1);
 
-		// MOD: Aplicar viewport para escalado consistente
 		viewport.apply();
 		game.getBatch().setProjectionMatrix(camera.combined);
 
 		game.getBatch().begin();
 		
-		// Dibujar fondo primero
+		// Dibujar fondo
 		spriteFondo.draw(game.getBatch());
 		
-		// MOD: Texto cambiado a temática de supervivencia zombi
+		// Textos del menú
 		game.getFont().draw(game.getBatch(), "Bienvenido a Zombie Survival!", 140, 400);
 		game.getFont().draw(game.getBatch(), "Pincha o presiona cualquier tecla para comenzar ...", 100, 300);
 		game.getFont().draw(game.getBatch(), "Controles: WASD/Flechas - Movimiento | ESPACIO/CLIC - Disparar", 100, 200);
@@ -75,7 +71,6 @@ public class PantallaMenu implements Screen {
 	
 	@Override
 	public void resize(int width, int height) {
-		// MOD: Actualizar viewport al cambiar tamaño
 		viewport.update(width, height);
 	}
 	
@@ -90,9 +85,7 @@ public class PantallaMenu implements Screen {
 	
 	@Override
 	public void dispose() {
-		// Liberar recursos del fondo
-		if (texturaFondo != null) {
-			texturaFondo.dispose();
-		}
+		// Los assets son gestionados por GestorAssets
+		// No es necesario liberarlos aquí
 	}
 }

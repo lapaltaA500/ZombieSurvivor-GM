@@ -9,14 +9,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 /**
- * Pantalla de Game Over con fondo implementado.
- * Se muestra cuando el jugador pierde todas sus vidas y permite reiniciar el juego.
+ * Pantalla de Game Over actualizada para usar GestorAssets
  */
 public class PantallaGameOver implements Screen {
 
 	private SpaceNavigation game;
 	private OrthographicCamera camera;
-	private Texture texturaFondo;
 	private Sprite spriteFondo;
 
 	public PantallaGameOver(SpaceNavigation game) {
@@ -25,8 +23,8 @@ public class PantallaGameOver implements Screen {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1200, 800);
 		
-		// Cargar fondo para pantalla de Game Over
-		texturaFondo = new Texture(Gdx.files.internal("fondo-gameover.jpg"));
+		// Cargar fondo usando GestorAssets
+		Texture texturaFondo = GestorAssets.get().getTextura("fondo-gameover");
 		spriteFondo = new Sprite(texturaFondo);
 		spriteFondo.setSize(1200, 800);
 		spriteFondo.setPosition(0, 0);
@@ -41,10 +39,10 @@ public class PantallaGameOver implements Screen {
 
 		game.getBatch().begin();
 		
-		// Dibujar fondo primero
+		// Dibujar fondo
 		spriteFondo.draw(game.getBatch());
 		
-		// MOD: Texto cambiado a temática zombi
+		// Textos de game over
 		game.getFont().draw(game.getBatch(), "¡Has sido infectado!", 120, 400,400,1,true);
 		game.getFont().draw(game.getBatch(), "Pincha o presiona cualquier tecla para reintentar ...", 100, 300);
 	
@@ -75,9 +73,7 @@ public class PantallaGameOver implements Screen {
 	
 	@Override
 	public void dispose() {
-		// Liberar recursos del fondo
-		if (texturaFondo != null) {
-			texturaFondo.dispose();
-		}
+		// Los assets son gestionados por GestorAssets
+		// No es necesario liberarlos aquí
 	}
 }

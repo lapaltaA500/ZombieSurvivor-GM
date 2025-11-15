@@ -194,4 +194,8 @@ public abstract class Enemigo extends EntidadJuego implements Daniable {
     public EstrategiaAtaque getEstrategiaAtaque() {
         return estrategiaAtaque;
     }
+    
+    public int getSaludMaxima() {
+        return saludMaxima;
+    }
 }

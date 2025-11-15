@@ -17,8 +17,8 @@ public class GestorSpawn {
     private static final float INTERVALO_SPAWN_BASE = 1.5f;
     private static final float INTERVALO_SPAWN_MINIMO = 0.4f;
     private static final float ACELERACION_POR_RONDA = 0.15f;
-    private static final int ENEMIGOS_BASE_POR_RONDA = 8;
-    private static final int INCREMENTO_ENEMIGOS_POR_RONDA = 3;
+    private static final int ENEMIGOS_BASE_POR_RONDA = 12;
+    private static final int INCREMENTO_ENEMIGOS_POR_RONDA = 4;
     
     public GestorSpawn(PantallaJuego pantalla, GestorEntidades gestorEntidades) {
         this.pantalla = pantalla;

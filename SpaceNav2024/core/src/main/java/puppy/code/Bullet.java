@@ -51,7 +51,7 @@ public class Bullet {
             destroyed = true;
         }
         
-        // MOD: Usar límites del mundo lógico en lugar de la ventana
+        // Verificar límites del mundo
         if (spr.getX() < 0 || spr.getX() + spr.getWidth() > WORLD_WIDTH) {
             destroyed = true;
         }

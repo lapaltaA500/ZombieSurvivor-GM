@@ -36,6 +36,8 @@ public class Nave4 extends EntidadJuego implements Daniable {
 	// MOD: Constantes del mundo lógico
 	private static final float WORLD_WIDTH = 1200f;
 	private static final float WORLD_HEIGHT = 800f;
+	
+	private java.util.function.Consumer<Bullet> onDisparo;
 
 	// TemplateCompat: Constructor modificado para usar EntidadJuego
 	public Nave4(int x, int y, Texture tx, Sound soundChoque, Texture txBala, Sound soundBala) {
@@ -108,6 +110,10 @@ public class Nave4 extends EntidadJuego implements Daniable {
 			spr.setPosition(x, y);
 		}
 	}
+	
+	public void setOnDisparo(java.util.function.Consumer<Bullet> callback) {
+	    this.onDisparo = callback;
+	}
 
 	@Override
 	public void dibujar(SpriteBatch batch) {
@@ -123,26 +129,34 @@ public class Nave4 extends EntidadJuego implements Daniable {
 	// Método de compatibilidad con el proyecto original
 	// =========================
 	public void draw(SpriteBatch batch, PantallaJuego juego) {
-		actualizar(Gdx.graphics.getDeltaTime());
-		dibujar(batch);
+	    actualizar(Gdx.graphics.getDeltaTime());
+	    dibujar(batch);
 
-		// Disparo orientado por rotación
-		if (!destruida && !invulnerable && (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isButtonJustPressed(0))) {          
-			// Calcular posición del muzzle (punta del arma) basada en rotación actual
-			float centroX = spr.getX() + spr.getWidth() / 2;
-			float centroY = spr.getY() + spr.getHeight() / 2;
-			float angulo = getAnguloRotacionRadians();
-			
-			// Offset del muzzle desde el centro del sprite (aproximadamente donde estaría el arma)
-			float offsetMuzzle = 35f;
-			float muzzleX = centroX + MathUtils.cos(angulo) * offsetMuzzle - 10; // -10 para centrar sprite de bala
-			float muzzleY = centroY + MathUtils.sin(angulo) * offsetMuzzle - 10;
-			
-			// Crear bala con dirección orientada
-			Bullet bala = new Bullet(muzzleX, muzzleY, angulo, txBala);
-			juego.agregarBala(bala);
-			if (soundBala != null) soundBala.play();
-		}
+	    // Disparo orientado por rotación
+	    if (!destruida && !invulnerable && (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isButtonJustPressed(0))) {          
+	        // Calcular posición del muzzle (punta del arma) basada en rotación actual
+	        float centroX = spr.getX() + spr.getWidth() / 2;
+	        float centroY = spr.getY() + spr.getHeight() / 2;
+	        float angulo = getAnguloRotacionRadians();
+	        
+	        // Offset del muzzle desde el centro del sprite
+	        float offsetMuzzle = 35f;
+	        float muzzleX = centroX + MathUtils.cos(angulo) * offsetMuzzle - 10;
+	        float muzzleY = centroY + MathUtils.sin(angulo) * offsetMuzzle - 10;
+	        
+	        // Crear bala con dirección orientada
+	        Bullet bala = new Bullet(muzzleX, muzzleY, angulo, txBala);
+	        
+	        // USAR CALLBACK en lugar de acceso directo a PantallaJuego
+	        if (onDisparo != null) {
+	            onDisparo.accept(bala);
+	        } else {
+	            // Fallback por compatibilidad
+	            juego.agregarBala(bala);
+	        }
+	        
+	        if (soundBala != null) soundBala.play();
+	    }
 	}
 
 	public Sprite getSprite() {

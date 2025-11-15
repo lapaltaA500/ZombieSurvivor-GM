@@ -10,12 +10,12 @@ public class EscenarioBosqueFactory implements EscenarioFactory {
     
     @Override
     public Texture crearFondo() {
-        return GestorAssets.get().getTextura("fondo-juego"); // Temporal - luego añadiremos fondo-bosque
+        return GestorAssets.get().getTextura("fondo-bosque"); 
     }
     
     @Override
     public Music crearMusica() {
-        return GestorAssets.get().getMusica("survival-theme");
+        return GestorAssets.get().getMusica("musica-bosque");
     }
     
     @Override
@@ -23,7 +23,7 @@ public class EscenarioBosqueFactory implements EscenarioFactory {
         Ball2 zombie = new Ball2(
             (int)x, (int)y, 
             60, 2, 2, 
-            GestorAssets.get().getTextura("zombie"), 
+            GestorAssets.get().getTextura("zombie-bosque"), 
             jugador
         );
         zombie.setEstrategiaMovimiento(new MovimientoPerseguir());
@@ -37,12 +37,17 @@ public class EscenarioBosqueFactory implements EscenarioFactory {
         Ball2 zombieRapido = new Ball2(
             (int)x, (int)y, 
             60, 3, 3, 
-            GestorAssets.get().getTextura("zombie"), 
+            GestorAssets.get().getTextura("zombie-bosque"), 
             jugador
         );
         zombieRapido.setEstrategiaMovimiento(new MovimientoRapido());
         zombieRapido.setEstrategiaAtaque(new AtaqueSimple());
         return zombieRapido;
+    }
+    
+    @Override
+    public Enemigo crearBoss(float x, float y, Nave4 jugador) {
+        return new BossBosque(x, y, GestorAssets.get().getTextura("boss-bosque"), jugador);
     }
     
     @Override

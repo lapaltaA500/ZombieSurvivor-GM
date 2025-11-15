@@ -1,6 +1,5 @@
 package puppy.code;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -34,22 +33,6 @@ public class Ball2 extends Enemigo {
     @Override
     public void dibujar(SpriteBatch batch) {
         spr.draw(batch);
-    }
-
-    // =========================================
-    // Métodos de compatibilidad
-    // =========================================
-
-    public void update() {
-        actualizar(Gdx.graphics.getDeltaTime());
-    }
-
-    public void draw(SpriteBatch batch) {
-        dibujar(batch);
-    }
-
-    public void checkCollision(Ball2 b2) {
-        // Comportamiento eliminado - los zombis no rebotan entre sí
     }
 
     public Rectangle getArea() {

@@ -11,6 +11,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import java.util.Iterator;
 
 /**
  * PantallaJuego refactorizada con gestión por managers
@@ -40,7 +41,7 @@ public class PantallaJuego implements Screen {
     private GestorUI gestorUI;
 
     // Elementos del juego
-    private MiniJefe miniJefe;
+    private Enemigo miniJefe;
     private Music musicaFondo;
     private Sprite spriteFondo;
 
@@ -49,7 +50,7 @@ public class PantallaJuego implements Screen {
     private int tiempoTransicion = 0;
     private static final int TIEMPO_TRANSICION_MAX = 120;
 
-    // NUEVO: Abstract Factory
+    // Abstract Factory
     private EscenarioFactory escenarioFactory;
     private GestorEscenarios gestorEscenarios;
 
@@ -85,8 +86,6 @@ public class PantallaJuego implements Screen {
 		
 		// Inicializar managers
 		inicializarManagers();
-		
-		// NUEVO: La música ahora se configura en aplicarEscenarioActual()
     }
 
     /**
@@ -115,6 +114,7 @@ public class PantallaJuego implements Screen {
         Sound sonidoBala = gestorAssets.getSonido("gun-shot");
         
         nave = new Nave4((int)(WORLD_WIDTH/2 - 22), 60, txNave, sonidoChoque, txBala, sonidoBala);
+        nave.setOnDisparo(bala -> gestorEntidades.agregarBala(bala));
         nave.setVidas(vidas);
     }
 
@@ -224,13 +224,27 @@ public class PantallaJuego implements Screen {
     private void renderMiniJefe(float delta) {
         actualizarRotacionNave();
         
+        // CORRECCIÓN: Actualizar todas las balas primero
+        Iterator<Bullet> iteradorBalas = gestorEntidades.getBalas().iterator();
+        while (iteradorBalas.hasNext()) {
+            Bullet bala = iteradorBalas.next();
+            bala.update(delta);
+            
+            // Eliminar si está destruida
+            if (bala.isDestroyed()) {
+                iteradorBalas.remove();
+            }
+        }
+        
         if (miniJefe != null) {
             // Actualizar mini jefe
             miniJefe.actualizar(delta);
             miniJefe.dibujar(batch);
 
             // Verificar colisiones de balas con mini jefe
-            for (Bullet bala : gestorEntidades.getBalas()) {
+            iteradorBalas = gestorEntidades.getBalas().iterator();
+            while (iteradorBalas.hasNext()) {
+                Bullet bala = iteradorBalas.next();
                 if (!bala.isDestroyed() && bala.getArea().overlaps(miniJefe.getArea())) {
                     miniJefe.recibirDanio(1);
                     bala.destruir();
@@ -239,6 +253,8 @@ public class PantallaJuego implements Screen {
                         Puntaje.get().sumar(100);
                         estadoActual = EstadosJuego.TRANSICION_RONDA;
                         tiempoTransicion = TIEMPO_TRANSICION_MAX;
+                        // NUEVO: Limpiar referencia al boss cuando muere
+                        gestorUI.setBossActual(null);
                         break;
                     }
                 }
@@ -264,14 +280,17 @@ public class PantallaJuego implements Screen {
     }
 
     /**
-     * Renderiza la transición entre rondas
+     * Renderiza la transición entre rondas con efecto de parpadeo
      */
     private void renderTransicion() {
-        game.getFont().draw(batch,
-                "¡Ronda " + (ronda + 1) + " completada!",
-                WORLD_WIDTH / 2f - 100,
-                WORLD_HEIGHT / 2f
-        );
+        // Efecto de parpadeo: visible durante 10 frames, invisible durante 10 frames
+        if (tiempoTransicion % 20 < 10) {
+            game.getFont().draw(batch,
+                    "¡Ronda " + (ronda + 1) + " completada!",
+                    WORLD_WIDTH / 2f - 100,
+                    WORLD_HEIGHT / 2f
+            );
+        }
         tiempoTransicion--;
     }
 
@@ -299,14 +318,16 @@ public class PantallaJuego implements Screen {
             gestorEntidades.getCantidadEnemigos() == 0) {
             
             // Generar mini jefe
-            miniJefe = new MiniJefe(
+            miniJefe = escenarioFactory.crearBoss(
                     WORLD_WIDTH / 2f,
                     WORLD_HEIGHT - 100f,
-                    gestorAssets.getTextura("mini-jefe"),
                     nave
             );
             miniJefe.escalarPorRonda(ronda);
             estadoActual = EstadosJuego.MINIJEFE;
+            
+            // Actualizar UI con referencia al boss
+            gestorUI.setBossActual(miniJefe);
         }
 
         // Transición a siguiente ronda

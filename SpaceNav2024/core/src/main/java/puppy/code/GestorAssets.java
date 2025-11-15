@@ -35,7 +35,6 @@ public class GestorAssets implements Disposable {
         // Jugador y elementos base
         cargarTextura("survivor", "survivor.png");
         cargarTextura("bullet", "bullet.png");
-        cargarTextura("mini-jefe", "mini-jefe.png");
         
         // Fondos de pantallas
         cargarTextura("fondo-menu", "fondo-menu.jpg");
@@ -49,6 +48,9 @@ public class GestorAssets implements Disposable {
         cargarTextura("zombie-bosque", "zombie-bosque.png");
         cargarTextura("zombie-ciudad", "zombie-ciudad.png");
         
+        cargarTextura("boss-bosque", "boss-bosque.png");
+        cargarTextura("boss-ciudad", "boss-ciudad.png");
+        
         // ==================== SONIDOS ====================
         cargarSonido("explosion", "zombie-death.ogg");
         cargarSonido("player-hurt", "player-hurt.ogg");
@@ -57,6 +59,8 @@ public class GestorAssets implements Disposable {
         // ==================== MÚSICA ====================
         cargarMusica("musica-bosque", "musica-bosque.wav");
         cargarMusica("musica-ciudad", "musica-ciudad.wav");
+        
+        
     }
     
     private void cargarTextura(String nombre, String ruta) {

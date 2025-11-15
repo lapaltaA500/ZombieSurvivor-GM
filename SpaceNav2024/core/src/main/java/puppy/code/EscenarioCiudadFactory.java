@@ -1,4 +1,3 @@
-// EscenarioCiudadFactory.java  
 package puppy.code;
 
 import com.badlogic.gdx.graphics.Texture;
@@ -11,12 +10,12 @@ public class EscenarioCiudadFactory implements EscenarioFactory {
     
     @Override
     public Texture crearFondo() {
-        return GestorAssets.get().getTextura("fondo-juego"); // Temporal
+        return GestorAssets.get().getTextura("fondo-ciudad"); 
     }
     
     @Override
     public Music crearMusica() {
-        return GestorAssets.get().getMusica("survival-theme");
+        return GestorAssets.get().getMusica("musica-ciudad"); 
     }
     
     @Override
@@ -24,7 +23,7 @@ public class EscenarioCiudadFactory implements EscenarioFactory {
         Ball2 zombie = new Ball2(
             (int)x, (int)y, 
             60, 2, 2, 
-            GestorAssets.get().getTextura("zombie"), 
+            GestorAssets.get().getTextura("zombie-ciudad"), 
             jugador
         );
         // Zombies de ciudad se mueven en zigzag
@@ -39,12 +38,17 @@ public class EscenarioCiudadFactory implements EscenarioFactory {
         Ball2 zombieCircular = new Ball2(
             (int)x, (int)y, 
             60, 2, 2, 
-            GestorAssets.get().getTextura("zombie"), 
+            GestorAssets.get().getTextura("zombie-ciudad"), 
             jugador
         );
         zombieCircular.setEstrategiaMovimiento(new MovimientoCircular());
         zombieCircular.setEstrategiaAtaque(new AtaqueSimple());
         return zombieCircular;
+    }
+    
+    @Override
+    public Enemigo crearBoss(float x, float y, Nave4 jugador) {
+        return new BossCiudad(x, y, GestorAssets.get().getTextura("boss-ciudad"), jugador);
     }
     
     @Override

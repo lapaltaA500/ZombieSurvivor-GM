@@ -11,5 +11,9 @@ public interface EscenarioFactory {
     Music crearMusica();
     Enemigo crearEnemigoBasico(float x, float y, Nave4 jugador);
     Enemigo crearEnemigoEspecial(float x, float y, Nave4 jugador);
+    
+    // NUEVO MÉTODO QUE FALTA
+    Enemigo crearBoss(float x, float y, Nave4 jugador);
+    
     String getNombreEscenario();
 }

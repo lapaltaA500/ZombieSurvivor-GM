@@ -28,16 +28,16 @@ public class GestorEntidades {
      * Actualiza todas las entidades y verifica colisiones
      */
     public void actualizar(float delta) {
-        actualizarBalas(delta);
+        actualizarBalas(delta);  
         actualizarEnemigos(delta);
         verificarColisiones();
     }
-    
+
     private void actualizarBalas(float delta) {
         Iterator<Bullet> iteradorBalas = balas.iterator();
         while (iteradorBalas.hasNext()) {
             Bullet bala = iteradorBalas.next();
-            bala.update(delta);
+            bala.update(delta);  // Actualizar con delta time
             
             if (bala.isDestroyed()) {
                 iteradorBalas.remove();

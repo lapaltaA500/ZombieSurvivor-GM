@@ -35,7 +35,7 @@ public class PantallaInstrucciones implements Screen {
         camera.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, 0);
         
         // Cargar fondo usando GestorAssets
-        Texture texturaFondo = GestorAssets.get().getTextura("fondo-bosque");
+        Texture texturaFondo = GestorAssets.get().getTextura("fondo-instrucciones");
         spriteFondo = new Sprite(texturaFondo);
         spriteFondo.setSize(WORLD_WIDTH, WORLD_HEIGHT);
         spriteFondo.setPosition(0, 0);

@@ -52,10 +52,9 @@ public class PantallaMenu implements Screen {
         spriteFondo.draw(game.getBatch());
         
         // Textos del menú
-        game.getFont().draw(game.getBatch(), "Bienvenido a Zombie Survival!", 140, 400);
-        game.getFont().draw(game.getBatch(), "Pincha o presiona cualquier tecla para comenzar ...", 100, 300);
+        game.getFont().draw(game.getBatch(), "Bienvenido Sobreviviente!", 100, 300);
         game.getFont().draw(game.getBatch(), "Presiona 'I' para ver instrucciones", 100, 200);
-        game.getFont().draw(game.getBatch(), "Controles: WASD/Flechas - Movimiento | ESPACIO/CLIC - Disparar", 100, 100);
+        game.getFont().draw(game.getBatch(), "Pincha o presiona cualquier tecla para comenzar ...", 100, 100);
     
         game.getBatch().end();
 
@@ -66,7 +65,7 @@ public class PantallaMenu implements Screen {
             dispose();
         }
         
-        // NUEVO: Acceso a pantalla de instrucciones
+        // Acceso a pantalla de instrucciones
         if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
             Screen ss = new PantallaInstrucciones(game);
             ss.resize(1200, 800);

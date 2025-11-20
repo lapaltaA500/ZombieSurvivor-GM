@@ -38,6 +38,7 @@ public class GestorAssets implements Disposable {
         
         // Fondos de pantallas
         cargarTextura("fondo-menu", "fondo-menu.jpg");
+        cargarTextura("fondo-instrucciones", "fondo-instrucciones.jpg");
         cargarTextura("fondo-gameover", "fondo-gameover.jpg");
         
         // Fondos temáticos para escenarios

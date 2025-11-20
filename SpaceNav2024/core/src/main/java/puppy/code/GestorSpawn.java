@@ -94,48 +94,6 @@ public class GestorSpawn {
     }
 
     /**
-     * Asigna estrategias de movimiento y ataque basado en la ronda
-     */
-    private void asignarEstrategiasAleatorias(Ball2 enemigo, int ronda) {
-        Random random = new Random();
-        
-        // Estrategias de movimiento basadas en la ronda
-        if (ronda <= 2) {
-            // Rondas 1-2: Solo movimiento básico
-            enemigo.setEstrategiaMovimiento(new MovimientoPerseguir());
-        } else if (ronda <= 4) {
-            // Rondas 3-4: Añadir zigzag
-            int tipo = random.nextInt(2);
-            if (tipo == 0) {
-                enemigo.setEstrategiaMovimiento(new MovimientoPerseguir());
-            } else {
-                enemigo.setEstrategiaMovimiento(new MovimientoZigZag());
-            }
-        } else if (ronda <= 6) {
-            // Rondas 5-6: Añadir movimiento rápido
-            int tipo = random.nextInt(3);
-            switch (tipo) {
-                case 0: enemigo.setEstrategiaMovimiento(new MovimientoPerseguir()); break;
-                case 1: enemigo.setEstrategiaMovimiento(new MovimientoZigZag()); break;
-                case 2: enemigo.setEstrategiaMovimiento(new MovimientoRapido()); break;
-            }
-        } else {
-            // Rondas 7+: Todos los tipos incluyendo circular
-            int tipo = random.nextInt(4);
-            switch (tipo) {
-                case 0: enemigo.setEstrategiaMovimiento(new MovimientoPerseguir()); break;
-                case 1: enemigo.setEstrategiaMovimiento(new MovimientoZigZag()); break;
-                case 2: enemigo.setEstrategiaMovimiento(new MovimientoRapido()); break;
-                case 3: enemigo.setEstrategiaMovimiento(new MovimientoCircular()); break;
-            }
-        }
-        
-        // Estrategias de ataque (más adelante se pueden añadir)
-        // Por ahora todos usan ataque simple
-        enemigo.setEstrategiaAtaque(new AtaqueSimple());
-    }
-    
-    /**
      * Calcula el intervalo de spawn actual considerando la ronda
      */
     private float calcularIntervaloSpawnActual(int ronda) {

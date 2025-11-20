@@ -1,20 +1,17 @@
 package puppy.code;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 /**
  * Movimiento en patrones predecibles para BossCiudad
  */
 public class MovimientoPatronCiudad implements EstrategiaMovimiento {
-    private float tiempo = 0;
     private int fase = 0;
     private float tiempoFase = 0;
     private Vector2 direccionSuavizada = new Vector2();
     
     @Override
     public void mover(Enemigo enemigo, float delta) {
-        tiempo += delta;
         tiempoFase += delta;
         
         // Cambiar fase cada 4 segundos

@@ -15,56 +15,66 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 public class PantallaMenu implements Screen {
 
-	private SpaceNavigation game;
-	private OrthographicCamera camera;
-	private Viewport viewport;
-	private Sprite spriteFondo;
+    private SpaceNavigation game;
+    private OrthographicCamera camera;
+    private Viewport viewport;
+    private Sprite spriteFondo;
 
-	// Constantes del mundo lógico
-	private static final float WORLD_WIDTH = 1200f;
-	private static final float WORLD_HEIGHT = 800f;
+    // Constantes del mundo lógico
+    private static final float WORLD_WIDTH = 1200f;
+    private static final float WORLD_HEIGHT = 800f;
 
-	public PantallaMenu(SpaceNavigation game) {
-		this.game = game;
+    public PantallaMenu(SpaceNavigation game) {
+        this.game = game;
         
-		// Sistema de viewport
-		camera = new OrthographicCamera();
-		viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
-		camera.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, 0);
-		
-		// Cargar fondo usando GestorAssets
-		Texture texturaFondo = GestorAssets.get().getTextura("fondo-menu");
-		spriteFondo = new Sprite(texturaFondo);
-		spriteFondo.setSize(WORLD_WIDTH, WORLD_HEIGHT);
-		spriteFondo.setPosition(0, 0);
-	}
+        // Sistema de viewport
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        camera.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, 0);
+        
+        // Cargar fondo usando GestorAssets
+        Texture texturaFondo = GestorAssets.get().getTextura("fondo-menu");
+        spriteFondo = new Sprite(texturaFondo);
+        spriteFondo.setSize(WORLD_WIDTH, WORLD_HEIGHT);
+        spriteFondo.setPosition(0, 0);
+    }
 
-	@Override
-	public void render(float delta) {
-		ScreenUtils.clear(0, 0, 0.2f, 1);
+    @Override
+    public void render(float delta) {
+        ScreenUtils.clear(0, 0, 0.2f, 1);
 
-		viewport.apply();
-		game.getBatch().setProjectionMatrix(camera.combined);
+        viewport.apply();
+        game.getBatch().setProjectionMatrix(camera.combined);
 
-		game.getBatch().begin();
-		
-		// Dibujar fondo
-		spriteFondo.draw(game.getBatch());
-		
-		// Textos del menú
-		game.getFont().draw(game.getBatch(), "Bienvenido a Zombie Survival!", 140, 400);
-		game.getFont().draw(game.getBatch(), "Pincha o presiona cualquier tecla para comenzar ...", 100, 300);
-		game.getFont().draw(game.getBatch(), "Controles: WASD/Flechas - Movimiento | ESPACIO/CLIC - Disparar", 100, 200);
-	
-		game.getBatch().end();
+        game.getBatch().begin();
+        
+        // Dibujar fondo
+        spriteFondo.draw(game.getBatch());
+        
+        // Textos del menú
+        game.getFont().draw(game.getBatch(), "Bienvenido a Zombie Survival!", 140, 400);
+        game.getFont().draw(game.getBatch(), "Pincha o presiona cualquier tecla para comenzar ...", 100, 300);
+        game.getFont().draw(game.getBatch(), "Presiona 'I' para ver instrucciones", 100, 200);
+        game.getFont().draw(game.getBatch(), "Controles: WASD/Flechas - Movimiento | ESPACIO/CLIC - Disparar", 100, 100);
+    
+        game.getBatch().end();
 
-		if (Gdx.input.isTouched() || Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
-			Screen ss = new PantallaJuego(game,1,3,0,1,1,10);
-			ss.resize(1200, 800);
-			game.setScreen(ss);
-			dispose();
-		}
-	}
+        if (Gdx.input.isTouched() || Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
+            Screen ss = new PantallaJuego(game,1,3,0,1,1,10);
+            ss.resize(1200, 800);
+            game.setScreen(ss);
+            dispose();
+        }
+        
+        // NUEVO: Acceso a pantalla de instrucciones
+        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+            Screen ss = new PantallaInstrucciones(game);
+            ss.resize(1200, 800);
+            game.setScreen(ss);
+            dispose();
+        }
+    }
+    
 	
 	@Override
 	public void show() {}

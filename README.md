@@ -105,16 +105,6 @@ Asegúrate de que los archivos `.ogg` y `.wav` estén presentes en los recursos.
 
 ---
 
-## 🚀 Próximas mejoras
-
-- 🧩 Nuevos escenarios y ambientaciones.  
-- 🧟‍♂️ Enemigos con distintos patrones de ataque.  
-- 🏃‍♂️ Animaciones para el jugador y los zombis.  
-- 💎 Implementación de power-ups y objetos temporales.  
-- 🌍 Expansión de contenido y nuevos modos de juego.
-
----
-
 ## 👥 Integrantes del equipo
 
 - **Marcelo Morales**  

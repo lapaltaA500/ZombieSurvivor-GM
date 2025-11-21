@@ -10,6 +10,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import puppy.code.gestores.GestorAssets;
+import puppy.code.juego.PantallaJuego;
+import puppy.code.juego.SpaceNavigation;
+
 /**
  * Pantalla de menú principal actualizada para usar GestorAssets
  */

@@ -8,6 +8,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import puppy.code.gestores.GestorAssets;
+import puppy.code.juego.PantallaJuego;
+import puppy.code.juego.SpaceNavigation;
+
 /**
  * Pantalla de Game Over actualizada para usar GestorAssets
  */

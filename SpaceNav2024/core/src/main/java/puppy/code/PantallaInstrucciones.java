@@ -12,6 +12,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import puppy.code.gestores.GestorAssets;
+import puppy.code.juego.SpaceNavigation;
+
 /**
  * Pantalla de instrucciones - Diseño básico y bonito
  */

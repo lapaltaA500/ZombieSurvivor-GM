@@ -14,11 +14,14 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import puppy.code.PantallaGameOver;
+import puppy.code.PantallaMenu;
 import puppy.code.Puntaje;
 import puppy.code.ataques.Bullet;
 import puppy.code.ataques.ProyectilMiniJefe;
+import puppy.code.bosses.BossProfe;
 import puppy.code.core.Enemigo;
 import puppy.code.core.EstadosJuego;
+import puppy.code.enemigos.Ball2;
 import puppy.code.enemigos.MiniJefe;
 import puppy.code.escenarios.EscenarioFactory;
 import puppy.code.escenarios.GestorEscenarios;
@@ -69,6 +72,8 @@ public class PantallaJuego implements Screen {
     private Enemigo miniJefe;
     private Music musicaFondo;
     private Sprite spriteFondo;
+    private Enemigo bossFinal;
+    private List<Enemigo> zombiesBossFinal;
 
     // Estados del juego 
     private int estadoActual = EstadosJuego.JUGANDO_ENEMIGOS;
@@ -227,7 +232,9 @@ public class PantallaJuego implements Screen {
             renderTransicion();
         } else if (estadoActual == EstadosJuego.GAME_OVER) {
             // Manejo de game over...
-        }
+        } else if (estadoActual == EstadosJuego.BOSS_FINAL) {
+	        renderBossFinal(delta);
+	    }
 
         batch.end();
 
@@ -371,6 +378,107 @@ public class PantallaJuego implements Screen {
         camera.unproject(posicionMouse);
         nave.actualizarRotacionMouse(posicionMouse.x, posicionMouse.y);
     }
+    
+    private void iniciarBossFinal() {
+        estadoActual = EstadosJuego.BOSS_FINAL;
+        zombiesBossFinal = new ArrayList<>();
+        
+        // Crear boss final
+        bossFinal = new BossProfe(
+            WORLD_WIDTH / 2f,
+            WORLD_HEIGHT - 150f,
+            GestorAssets.get().getTextura("boss-profe"),
+            nave
+        );
+        
+        // Configurar callback para invocación de zombies
+        if (bossFinal instanceof BossProfe) {
+            ((BossProfe) bossFinal).setOnInvocarCallback(zombie -> {
+                zombiesBossFinal.add(zombie);
+                gestorEntidades.agregarEnemigo((Ball2) zombie);
+            });
+        }
+        
+        // Cambiar a fondo especial del IBC
+        Texture fondoIBC = GestorAssets.get().getTextura("fondo-ibc");
+        spriteFondo = new Sprite(fondoIBC);
+        spriteFondo.setSize(WORLD_WIDTH, WORLD_HEIGHT);
+        spriteFondo.setPosition(0, 0);
+        
+        // Musica especial opcional
+        if (musicaFondo != null) {
+            musicaFondo.stop();
+        }
+        // Podrías añadir música épica aquí
+        
+        gestorUI.setBossActual(bossFinal);
+        gestorUI.setNombreEscenario("¡BOSS FINAL: EL PROFE!");
+    }
+    
+    private void renderBossFinal(float delta) {
+        actualizarRotacionNave();
+        
+        // Actualizar sistemas base
+        gestorEntidades.actualizar(delta);
+        
+        // Actualizar boss final
+        if (bossFinal != null) {
+            bossFinal.actualizar(delta);
+            bossFinal.dibujar(batch);
+            
+            // Verificar colisiones balas del jugador con boss final
+            Iterator<Bullet> iteradorBalas = gestorEntidades.getBalas().iterator();
+            while (iteradorBalas.hasNext()) {
+                Bullet bala = iteradorBalas.next();
+                if (!bala.isDestroyed() && bala.getArea().overlaps(bossFinal.getArea())) {
+                    bossFinal.recibirDanio(1);
+                    bala.destruir();
+                    
+                    if (!bossFinal.estaVivo()) {
+                        Puntaje.get().sumar(500); // Gran recompensa
+                        mostrarPantallaVictoria();
+                        return;
+                    }
+                }
+            }
+            
+            // Colisión boss final - jugador
+            if (!nave.estaInvulnerable() && bossFinal.getArea().overlaps(nave.getArea())) {
+                nave.recibirDanio(bossFinal.getDanio());
+            }
+            
+            // Gestionar zombies invocados
+            if (bossFinal instanceof BossProfe) {
+                BossProfe profe = (BossProfe) bossFinal;
+                
+                // Remover zombies muertos
+                Iterator<Enemigo> iterZombies = zombiesBossFinal.iterator();
+                while (iterZombies.hasNext()) {
+                    Enemigo zombie = iterZombies.next();
+                    if (!zombie.estaVivo()) {
+                        iterZombies.remove();
+                        profe.removerZombieInvocado(zombie);
+                    }
+                }
+            }
+        }
+        
+        // Dibujar todo
+        gestorEntidades.dibujar(batch);
+        nave.draw(batch, this);
+    }
+    
+    private void mostrarPantallaVictoria() {
+        // Crear pantalla de victoria (necesitarás crearla)
+        // Por ahora, volvemos al menú con mensaje de victoria
+        System.out.println("¡VICTORIA! Has derrotado al Boss Final");
+        
+        // Podrías crear una PantallaVictoria similar a PantallaGameOver
+        Screen pantallaMenu = new PantallaMenu(game);
+        pantallaMenu.resize(1200, 800);
+        game.setScreen(pantallaMenu);
+        dispose();
+    }
 
     /**
      * Verifica y realiza cambios de estado del juego
@@ -426,18 +534,19 @@ public class PantallaJuego implements Screen {
 
         // Transición a siguiente ronda
         if (estadoActual == EstadosJuego.TRANSICION_RONDA && tiempoTransicion <= 0) {
-            Screen siguientePantalla = new PantallaJuego(
-                    game,
-                    ronda + 1,
-                    nave.getVidas(),
-                    Puntaje.get().getScore(),
-                    velXAsteroides + 1,
-                    velYAsteroides + 1,
-                    cantAsteroides + 2
-            );
-            siguientePantalla.resize(1200, 800);
-            game.setScreen(siguientePantalla);
-            dispose();
+            if (ronda == 4) {
+                // INICIAR BOSS FINAL
+                iniciarBossFinal();
+            } else {
+                // Rondas normales 
+                Screen siguientePantalla = new PantallaJuego(
+                    game, ronda + 1, nave.getVidas(), Puntaje.get().getScore(),
+                    velXAsteroides + 1, velYAsteroides + 1, cantAsteroides + 2
+                );
+                siguientePantalla.resize(1200, 800);
+                game.setScreen(siguientePantalla);
+                dispose();
+            }
         }
 
         // Game over

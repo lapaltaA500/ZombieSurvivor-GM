@@ -44,6 +44,7 @@ public class GestorAssets implements Disposable {
         // Fondos temáticos para escenarios
         cargarTextura("fondo-bosque", "fondo-bosque.jpg");
         cargarTextura("fondo-ciudad", "fondo-ciudad.jpg");
+        cargarTextura("fondo-ibc", "fondo-ibc.png");
         
         // Zombies temáticos
         cargarTextura("zombie-bosque", "zombie-bosque.png");
@@ -51,7 +52,8 @@ public class GestorAssets implements Disposable {
         
         cargarTextura("boss-bosque", "boss-bosque.png");
         cargarTextura("boss-ciudad", "boss-ciudad.png");
-        
+        cargarTextura("boss-profe", "boss-profe.png");
+                
         // Proyectiles para mini jefes 
         cargarTextura("proyectil-piedra", "piedra.png");
         cargarTextura("proyectil-auto", "auto.png");
